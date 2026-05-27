@@ -12,7 +12,8 @@ namespace Characters.Player
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private CombatActor _actor;
         [SerializeField] private Transform _cameraTransform;
-
+        [SerializeField] private PlayerLockOn _lockOn;
+        
         [Header("Movement")]
         [SerializeField] private float _moveSpeed = 4.5f;
         [SerializeField] private float _blockingMoveSpeed = 2.2f;
@@ -33,6 +34,9 @@ namespace Characters.Player
 
             if (_cameraTransform == null && Camera.main != null)
                 _cameraTransform = Camera.main.transform;
+            
+            if (_lockOn == null)
+                _lockOn = GetComponent<PlayerLockOn>();
         }
 
         private void Start()
@@ -119,14 +123,33 @@ namespace Characters.Player
 
         private void ApplyRotation(Vector3 moveDirection)
         {
+            if (_lockOn != null && _lockOn.HasTarget)
+            {
+                Vector3 toTarget = _lockOn.CurrentTarget.Position - transform.position;
+                toTarget.y = 0f;
+
+                if (toTarget.sqrMagnitude < 0.0001f)
+                    return;
+
+                Quaternion targetRotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
+
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRotation,
+                    _rotationSpeed * Time.deltaTime
+                );
+
+                return;
+            }
+
             if (moveDirection.sqrMagnitude < 0.0001f)
                 return;
 
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            Quaternion movementRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
 
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
-                targetRotation,
+                movementRotation,
                 _rotationSpeed * Time.deltaTime
             );
         }

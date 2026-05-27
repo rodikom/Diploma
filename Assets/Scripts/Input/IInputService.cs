@@ -8,6 +8,7 @@ namespace Game.Input
         Vector2 Move { get; }
         Vector2 Look { get; }
         bool IsBlockHeld { get; }
+        bool IsLookFromMouse { get; }
 
         event System.Action LightAttackPressed;
         event System.Action HeavyAttackPressed;

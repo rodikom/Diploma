@@ -11,6 +11,10 @@ namespace Game.Input
         public Vector2 Look => _inputActions.Player.Look.ReadValue<Vector2>();
         public bool IsBlockHeld => _inputActions.Player.Block.IsPressed();
 
+        public bool IsLookFromMouse =>
+            _inputActions.Player.Look.activeControl != null &&
+            _inputActions.Player.Look.activeControl.device is Mouse;
+        
         public event System.Action LightAttackPressed;
         public event System.Action HeavyAttackPressed;
         public event System.Action DodgeOrStepPressed;
