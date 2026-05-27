@@ -11,6 +11,7 @@ namespace Combat.Runtime
         [SerializeField] private Guard _guard;
         [SerializeField] private CombatStateController _state;
         [SerializeField] private AttackPhaseController _attackPhase;
+        [SerializeField] private AttackThreatProvider _threatProvider;
 
         public CombatSide Side => _side;
         public Health Health => _health;
@@ -18,6 +19,7 @@ namespace Combat.Runtime
         public Guard Guard => _guard;
         public CombatStateController State => _state;
         public AttackPhaseController AttackPhase => _attackPhase;
+        public AttackThreatProvider ThreatProvider => _threatProvider;
         public bool IsAlive => _health != null && !_health.IsDead;
 
         private void Awake()
@@ -36,6 +38,9 @@ namespace Combat.Runtime
 
             if (_attackPhase == null)
                 _attackPhase = GetComponent<AttackPhaseController>();
+
+            if (_threatProvider == null)
+                _threatProvider = GetComponent<AttackThreatProvider>();
 
             if (_health != null)
                 _health.Died += OnDied;

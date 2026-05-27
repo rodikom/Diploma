@@ -24,6 +24,13 @@ namespace Combat.Data
         [Header("Cost")]
         [SerializeField] private float _staminaCost = 18f;
 
+        [Header("Hit Detection")]
+        [SerializeField] private float _range = 2f;
+        [SerializeField] private float _hitRadius = 0.45f;
+        [SerializeField, Range(1f, 180f)] private float _hitAngle = 70f;
+        [SerializeField] private float _hitOriginHeight = 1f;
+        [SerializeField] private float _hitOriginForwardOffset = 0.35f;
+
         public DamageType DamageType => _damageType;
         public float HealthDamage => _healthDamage;
         public float StaminaDamage => _staminaDamage;
@@ -34,5 +41,10 @@ namespace Combat.Data
         public float ActiveTime => _activeTime;
         public float RecoveryTime => _recoveryTime;
         public float StaminaCost => _staminaCost;
+        public float Range => _range;
+        public float HitRadius => _hitRadius;
+        public float HitAngle => _hitAngle;
+        public float HitOriginHeight => _hitOriginHeight;
+        public float HitOriginForwardOffset => _hitOriginForwardOffset;
     }
 }

@@ -12,8 +12,8 @@ namespace Characters.Player
     {
         [Header("References")]
         [SerializeField] private CombatActor _actor;
-        [SerializeField] private CombatActor _currentTarget;
         [SerializeField] private DamageResolver _damageResolver;
+        [SerializeField] private MeleeHitDetector _hitDetector;
 
         [Header("Attacks")]
         [SerializeField] private AttackData _lightAttack;
@@ -33,6 +33,9 @@ namespace Characters.Player
         {
             if (_actor == null)
                 _actor = GetComponent<CombatActor>();
+
+            if (_hitDetector == null)
+                _hitDetector = GetComponent<MeleeHitDetector>();
         }
 
         private void Start()
@@ -133,16 +136,22 @@ namespace Characters.Player
                 return;
             }
 
-            if (_currentTarget == null)
+            if (_hitDetector == null)
             {
-                Debug.Log("[PlayerCombat] No target.");
+                Debug.LogError("[PlayerCombat] MeleeHitDetector is missing.");
                 return;
             }
 
-            HitResult result = _damageResolver.ResolveHit(_actor, _currentTarget, attackData, _hitQuality);
+            if (!_hitDetector.TryFindTarget(_actor, attackData, out CombatActor target))
+            {
+                Debug.Log($"[PlayerCombat] Attack={attackData.name}, Miss");
+                return;
+            }
+
+            HitResult result = _damageResolver.ResolveHit(_actor, target, attackData, _hitQuality);
 
             Debug.Log(
-                $"[PlayerCombat] Attack={attackData.name}, Phase={_actor.AttackPhase?.CurrentPhase}, Hit={result.WasHit}, Guard={result.GuardResult}, Quality={result.HitQuality}, Damage={result.HealthDamage}, Fatal={result.IsFatal}"
+                $"[PlayerCombat] Attack={attackData.name}, Target={target.name}, Phase={_actor.AttackPhase?.CurrentPhase}, Hit={result.WasHit}, Guard={result.GuardResult}, Quality={result.HitQuality}, Damage={result.HealthDamage}, Fatal={result.IsFatal}"
             );
         }
     }

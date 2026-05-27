@@ -13,12 +13,13 @@ namespace Characters.Player
         [SerializeField] private CombatActor _actor;
         [SerializeField] private Transform _cameraTransform;
         [SerializeField] private PlayerLockOn _lockOn;
+        [SerializeField] private ThirdPersonCamera _thirdPersonCamera;
         
         [Header("Movement")]
         [SerializeField] private float _moveSpeed = 4.5f;
         [SerializeField] private float _blockingMoveSpeed = 2.2f;
-        [SerializeField] private float _rotationSpeed = 14f;
-        [SerializeField] private float _gravity = -25f;
+        [SerializeField] private float _rotationSpeedDegrees = 540f;
+        [SerializeField] private float _rotationDeadZoneAngle = 1.5f;        [SerializeField] private float _gravity = -25f;
         [SerializeField] private float _groundedVerticalVelocity = -2f;
 
         private IInputService _inputService;
@@ -37,6 +38,9 @@ namespace Characters.Player
             
             if (_lockOn == null)
                 _lockOn = GetComponent<PlayerLockOn>();
+            
+            if (_thirdPersonCamera == null && _cameraTransform != null)
+                _thirdPersonCamera = _cameraTransform.GetComponent<ThirdPersonCamera>();
         }
 
         private void Start()
@@ -81,20 +85,30 @@ namespace Characters.Player
             if (input.sqrMagnitude < 0.0001f)
                 return Vector3.zero;
 
-            Vector3 forward = Vector3.forward;
-            Vector3 right = Vector3.right;
+            Vector3 forward;
+            Vector3 right;
 
-            if (_cameraTransform != null)
+            if (_thirdPersonCamera != null)
+            {
+                forward = _thirdPersonCamera.PlanarForward;
+                right = _thirdPersonCamera.PlanarRight;
+            }
+            else if (_cameraTransform != null)
             {
                 forward = _cameraTransform.forward;
                 right = _cameraTransform.right;
+
+                forward.y = 0f;
+                right.y = 0f;
+
+                forward.Normalize();
+                right.Normalize();
             }
-
-            forward.y = 0f;
-            right.y = 0f;
-
-            forward.Normalize();
-            right.Normalize();
+            else
+            {
+                forward = Vector3.forward;
+                right = Vector3.right;
+            }
 
             Vector3 direction = forward * input.y + right * input.x;
 
@@ -103,7 +117,7 @@ namespace Characters.Player
 
             return direction;
         }
-
+        
         private float GetCurrentMoveSpeed()
         {
             if (_actor.State == null)
@@ -123,6 +137,14 @@ namespace Characters.Player
 
         private void ApplyRotation(Vector3 moveDirection)
         {
+            if (_actor.State != null &&
+                (_actor.State.IsAttacking ||
+                 _actor.State.IsStepping ||
+                 _actor.State.IsRecovering ||
+                 _actor.State.IsStaggered ||
+                 _actor.State.IsDead))
+                return;
+
             if (_lockOn != null && _lockOn.HasTarget)
             {
                 Vector3 toTarget = _lockOn.CurrentTarget.Position - transform.position;
@@ -131,27 +153,14 @@ namespace Characters.Player
                 if (toTarget.sqrMagnitude < 0.0001f)
                     return;
 
-                Quaternion targetRotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
-
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRotation,
-                    _rotationSpeed * Time.deltaTime
-                );
-
+                RotateTowardsDirection(toTarget.normalized);
                 return;
             }
 
             if (moveDirection.sqrMagnitude < 0.0001f)
                 return;
 
-            Quaternion movementRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                movementRotation,
-                _rotationSpeed * Time.deltaTime
-            );
+            RotateTowardsDirection(moveDirection.normalized);
         }
 
         private void ApplyGravity()
@@ -177,6 +186,27 @@ namespace Characters.Player
                 _actor.State.SetState(Combat.Core.CombatState.Moving);
             else if (_actor.State.IsMoving)
                 _actor.State.SetState(Combat.Core.CombatState.Idle);
+        }
+        
+        private void RotateTowardsDirection(Vector3 direction)
+        {
+            if (direction.sqrMagnitude < 0.0001f)
+                return;
+
+            float targetYaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            float currentYaw = transform.eulerAngles.y;
+            float angleDelta = Mathf.DeltaAngle(currentYaw, targetYaw);
+
+            if (Mathf.Abs(angleDelta) < _rotationDeadZoneAngle)
+                return;
+
+            float newYaw = Mathf.MoveTowardsAngle(
+                currentYaw,
+                targetYaw,
+                _rotationSpeedDegrees * Time.deltaTime
+            );
+
+            transform.rotation = Quaternion.Euler(0f, newYaw, 0f);
         }
     }
 }
