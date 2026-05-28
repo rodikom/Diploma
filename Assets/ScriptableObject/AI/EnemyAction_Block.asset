@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e646c4e4fa2e48ba84e58beaf08495e7, type: 3}
+  m_Name: EnemyAction_Block
+  m_EditorClassIdentifier: 
+  _canBeInterrupted: 1
+  _minimumScoreToRun: 0.05
+  _considerations:
+  - {fileID: 11400000, guid: 95fec7f41b3475add96300991395388e, type: 2}
+  - {fileID: 11400000, guid: eaa32fe490002ba429e8d11efd869b23, type: 2}
+  - {fileID: 11400000, guid: f94f959f856149c74b571f760af27b33, type: 2}
+  - {fileID: 11400000, guid: b9d8607f473477c89baab7cc795d8a03, type: 2}
