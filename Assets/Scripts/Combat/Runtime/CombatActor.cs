@@ -1,3 +1,4 @@
+using System;
 using Combat.Core;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace Combat.Runtime
         [SerializeField] private CombatStateController _state;
         [SerializeField] private AttackPhaseController _attackPhase;
         [SerializeField] private AttackThreatProvider _threatProvider;
+
+        public event Action<HitResult> HitReceived;
 
         public CombatSide Side => _side;
         public Health Health => _health;
@@ -50,6 +53,11 @@ namespace Combat.Runtime
         {
             if (_health != null)
                 _health.Died -= OnDied;
+        }
+
+        public void ReceiveHit(HitResult result)
+        {
+            HitReceived?.Invoke(result);
         }
 
         private void OnDied()

@@ -11,6 +11,7 @@ namespace Characters.Enemy.AI
         [SerializeField] private CombatActor _actor;
         [SerializeField] private EnemyPerception _perception;
         [SerializeField] private EnemyMotor _motor;
+        [SerializeField] private EnemyAttackController _attack;
         
         [Header("Decision")]
         [SerializeField] private UtilityAction[] _actions;
@@ -36,7 +37,10 @@ namespace Characters.Enemy.AI
             if (_motor == null)
                 _motor = GetComponent<EnemyMotor>();
 
-            _context = new UtilityAIContext(_actor, _perception, _motor);
+            if (_attack == null)
+                _attack = GetComponent<EnemyAttackController>();
+
+            _context = new UtilityAIContext(_actor, _perception, _motor, _attack);
         }
 
         private void Update()

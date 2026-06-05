@@ -4,6 +4,7 @@ using Combat.Data;
 using Combat.Runtime;
 using Core.Services;
 using Game.Input;
+using Game.Animation;
 using UnityEngine;
 
 namespace Characters.Player
@@ -14,6 +15,7 @@ namespace Characters.Player
         [SerializeField] private CombatActor _actor;
         [SerializeField] private DamageResolver _damageResolver;
         [SerializeField] private MeleeHitDetector _hitDetector;
+        [SerializeField] private CombatAnimator _combatAnimator;
 
         [Header("Attacks")]
         [SerializeField] private AttackData _lightAttack;
@@ -36,6 +38,9 @@ namespace Characters.Player
 
             if (_hitDetector == null)
                 _hitDetector = GetComponent<MeleeHitDetector>();
+
+            if (_combatAnimator == null)
+                _combatAnimator = GetComponent<CombatAnimator>();
         }
 
         private void Start()
@@ -89,6 +94,11 @@ namespace Characters.Player
 
             if (_attackRoutine != null)
                 StopCoroutine(_attackRoutine);
+                
+            if (attackData == _lightAttack)
+                _combatAnimator?.PlayLightAttack();
+            else if (attackData == _heavyAttack)
+                _combatAnimator?.PlayHeavyAttack();
 
             _attackRoutine = StartCoroutine(AttackRoutine(attackData));
         }

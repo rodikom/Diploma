@@ -9,15 +9,21 @@ namespace AI.Utility
         public CombatActor Self { get; }
         public EnemyPerception Perception { get; }
         public EnemyMotor Motor { get; }
+        public EnemyAttackController Attack { get; }
 
         public CombatActor Target => Perception != null ? Perception.Target : null;
         public bool HasTarget => Perception != null && Perception.HasTarget;
 
-        public UtilityAIContext(CombatActor self, EnemyPerception perception, EnemyMotor motor)
+        public UtilityAIContext(
+            CombatActor self,
+            EnemyPerception perception,
+            EnemyMotor motor,
+            EnemyAttackController attack)
         {
             Self = self;
             Perception = perception;
             Motor = motor;
+            Attack = attack;
         }
     }
 }

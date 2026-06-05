@@ -12,7 +12,8 @@ namespace Characters.Player
 
         [Header("Camera")]
         [SerializeField] private float _distance = 4.5f;
-        [SerializeField] private float _height = 0.4f;
+        [SerializeField] private float _targetHeight = 1.4f;
+        [SerializeField] private float _lockOnTargetHeight = 1.7f;
         [SerializeField] private float _followSharpness = 35f;
 
         [Header("Sensitivity")]
@@ -112,7 +113,8 @@ namespace Characters.Player
 
         private void UpdateLockOnRotation()
         {
-            Vector3 toTarget = _lockOn.CurrentTarget.Position - _smoothedTargetPosition;
+            Vector3 focusPoint = GetFocusPoint();
+            Vector3 toTarget = _lockOn.CurrentTarget.Position - focusPoint;
 
             if (toTarget.sqrMagnitude < 0.0001f)
                 return;
@@ -132,11 +134,12 @@ namespace Characters.Player
 
         private void ApplyCameraTransform()
         {
+            Vector3 focusPoint = GetFocusPoint();
             Quaternion rotation = Quaternion.Euler(_pitch, _yaw, 0f);
-            Vector3 offset = rotation * new Vector3(0f, _height, -_distance);
+            Vector3 offset = rotation * new Vector3(0f, 0f, -_distance);
 
             transform.SetPositionAndRotation(
-                _smoothedTargetPosition + offset,
+                focusPoint + offset,
                 rotation
             );
         }
@@ -147,6 +150,15 @@ namespace Characters.Player
                 pitch -= 360f;
 
             return pitch;
+        }
+        
+        private Vector3 GetFocusPoint()
+        {
+            float height = _lockOn != null && _lockOn.HasTarget
+                ? _lockOnTargetHeight
+                : _targetHeight;
+
+            return _smoothedTargetPosition + Vector3.up * height;
         }
     }
 }

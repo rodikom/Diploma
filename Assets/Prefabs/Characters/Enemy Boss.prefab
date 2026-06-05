@@ -752,6 +752,7 @@ GameObject:
   - component: {fileID: 6715410785013828553}
   - component: {fileID: 3514619256967331260}
   - component: {fileID: 2188599217377208997}
+  - component: {fileID: 8453972027752581708}
   m_Layer: 3
   m_Name: Enemy Boss
   m_TagString: Untagged
@@ -767,7 +768,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3088538417248071795}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.87, y: 0.21, z: -13.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1036,6 +1037,20 @@ MonoBehaviour:
   _dieTrigger: Die
   _movementAnimationScale: 0.35
   _movementDampTime: 0.1
+--- !u!114 &8453972027752581708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3088538417248071795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 366f70acc3bb6714badd69acea06b897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _actor: {fileID: 6741497183306878080}
+  _animator: {fileID: 2188599217377208997}
 --- !u!1 &3121329174986449585
 GameObject:
   m_ObjectHideFlags: 0

@@ -63,7 +63,7 @@ namespace Combat.Runtime
             if (isFatal && !defenderHealth.IsDead)
                 defenderHealth.Kill();
 
-            return new HitResult(
+            HitResult result = new HitResult(
                 true,
                 guardResult,
                 hitQuality,
@@ -72,6 +72,10 @@ namespace Combat.Runtime
                 guardDamage,
                 isFatal
             );
+
+            defender.ReceiveHit(result);
+
+            return result;
         }
 
         private HitQuality GetHitQuality(AttackData attackData, float hitQuality01)

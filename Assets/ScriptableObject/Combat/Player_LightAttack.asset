@@ -22,3 +22,8 @@ MonoBehaviour:
   _activeTime: 0.18
   _recoveryTime: 0.45
   _staminaCost: 18
+  _range: 1.23
+  _hitRadius: 0.45
+  _hitAngle: 56
+  _hitOriginHeight: 1
+  _hitOriginForwardOffset: 0.35
