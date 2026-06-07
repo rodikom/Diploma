@@ -28,4 +28,16 @@ namespace Combat.Core
         Player,
         Enemy
     }
+    
+    public enum CombatState
+    {
+        Idle,
+        Moving,
+        Attacking,
+        Blocking,
+        Stepping,
+        Recovering,
+        Staggered,
+        Dead
+    }
 }
